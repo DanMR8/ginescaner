@@ -54,3 +54,25 @@ export const actualizarPaciente = async (token, id, data) => {
   });
   return response.data;
 };
+
+export async function registrarMedico(nombre, correo, contrasena) {
+  const response = await fetch('http://localhost:8000/registro', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      nombre,
+      correo,
+      contrasena,
+      tipo: 'medico',
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al registrar');
+  }
+
+  return await response.json();
+}
