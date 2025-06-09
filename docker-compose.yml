@@ -1,0 +1,54 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mi_proyecto
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+    ports:
+      - '3307:3306'  # Puerto expuesto en host
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:  # ✅ Espera a que MySQL esté listo
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: fastapi_backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy  # ✅ Espera salud de MySQL
+    volumes:
+      - ./backend:/code
+    ports:
+      - '8000:8000'
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: mi_proyecto
+      DB_USER: admin
+      DB_PASSWORD: admin123
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    restart: always
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - '5173:5173'
+    stdin_open: true
+    tty: true
+    command: sh -c "npm install && npm run dev -- --host"
+
+volumes:
+  mysql_data:
