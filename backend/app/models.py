@@ -2,33 +2,29 @@ from sqlalchemy import Column, Integer, String, Date, Text, Enum, ForeignKey, Da
 from sqlalchemy.orm import relationship
 from app.database import Base
 
-# NOTA: Asegúrate de importar este archivo en main.py
-# desde app import models  # necesario para crear las tablas
-
 class User(Base):
-    __tablename__ = "usuarios"
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, index=True)
+    clave = Column(String(100), nullable=False)
+    tipo = Column(String(20), nullable=False)
 
-    id_usuario = Column(Integer, primary_key=True, index=True)
-    usuario = Column(String(20), unique=True, nullable=False)
-    contrasena = Column(String(255), nullable=False)
-    tipo = Column(Enum('medico', 'paciente'), nullable=False)
-    estatus = Column(Enum('activo', 'inactivo', 'suspendido'), default='activo', nullable=False)
-
-    medico = relationship("Medico", back_populates="usuario", uselist=False)
-    paciente = relationship("Paciente", back_populates="usuario", uselist=False)
+    pacientes = relationship("Paciente", back_populates="usuario")
+    medico = relationship("Medico", uselist=False, back_populates="usuario")
 
 class Medico(Base):
     __tablename__ = "medicos"
 
-    id_medico = Column(Integer, primary_key=True, index=True)
-    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"), nullable=False)
-    nombres = Column(String(50), nullable=False)
-    apellidos = Column(String(50), nullable=False)
-    especialidad = Column(String(50), nullable=False)
-    cedula = Column(String(20), unique=True, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    id_usuario = Column(Integer, ForeignKey("users.id"))
+    nombres = Column(String(100), nullable=False)
+    apellidos = Column(String(100), nullable=False)
+    especialidad = Column(String(100), nullable=False)
+    cedula = Column(String(50), nullable=False)
     institucion = Column(String(100), nullable=False)
-    telefono = Column(String(20), unique=True)
-    correo = Column(String(50), unique=True)
+    telefono = Column(String(20), nullable=False)
+    correo = Column(String(100), nullable=False)
 
     usuario = relationship("User", back_populates="medico")
     sesiones = relationship("Sesion", back_populates="medico")
@@ -37,24 +33,24 @@ class Paciente(Base):
     __tablename__ = "pacientes"
 
     id_paciente = Column(Integer, primary_key=True, index=True)
-    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"), nullable=False)
-    nombres = Column(String(50), nullable=False)
-    apellidos = Column(String(50), nullable=False)
+    id_usuario = Column(Integer, ForeignKey("users.id"), nullable=False)
+    nombres = Column(String(100), nullable=False)
+    apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
     alergias = Column(Text)
     enfermedades_cronicas = Column(Text)
-    contacto_emergencia = Column(String(50))
+    contacto_emergencia = Column(String(100))
     telefono = Column(String(20), unique=True)
-    correo = Column(String(50), unique=True)
+    correo = Column(String(100), unique=True)
 
-    usuario = relationship("User", back_populates="paciente")
+    usuario = relationship("User", back_populates="pacientes")
     sesiones = relationship("Sesion", back_populates="paciente")
 
 class Sesion(Base):
     __tablename__ = "sesiones"
 
     id_sesion = Column(Integer, primary_key=True, index=True)
-    id_medico = Column(Integer, ForeignKey("medicos.id_medico"), nullable=False)
+    id_medico = Column(Integer, ForeignKey("medicos.id"), nullable=False)
     id_paciente = Column(Integer, ForeignKey("pacientes.id_paciente"), nullable=False)
     fecha = Column(DateTime, nullable=False)
     motivo = Column(Text, nullable=False)

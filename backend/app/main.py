@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import users, protected, pacientes, sesiones, imagenes
+from app.routes import users, protected, medicos, pacientes, sesiones, imagenes
 from app.database import engine, Base
 from app import models
 
@@ -23,3 +23,4 @@ app.include_router(protected.router)
 app.include_router(pacientes.router)
 app.include_router(sesiones.router)
 app.include_router(imagenes.router)
+app.include_router(medicos.router)

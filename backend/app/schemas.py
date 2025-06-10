@@ -2,14 +2,23 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 
-class MedicoCreate(BaseModel):
+class MedicoBase(BaseModel):
     nombres: str
     apellidos: str
     especialidad: str
     cedula: str
     institucion: str
-    telefono: Optional[str] = None
-    correo: Optional[EmailStr] = None
+    telefono: str
+    correo: str
+
+class MedicoCreate(MedicoBase):
+    user_id: int
+
+class MedicoOut(MedicoBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 class UserCreate(BaseModel):
     usuario: str
@@ -19,13 +28,13 @@ class UserCreate(BaseModel):
     perfil_medico: Optional[MedicoCreate] = None
 
 class UserOut(BaseModel):
-    id_usuario: int
-    usuario: str
+    id: int
+    nombre: str
+    email: str
     tipo: str
-    estatus: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PacienteCreate(BaseModel):
     nombre: str
@@ -36,7 +45,7 @@ class PacienteOut(PacienteCreate):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SesionCreate(BaseModel):
     id_paciente: int
@@ -56,4 +65,4 @@ class SesionOut(SesionCreate):
     id_medico: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

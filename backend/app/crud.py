@@ -37,30 +37,17 @@ def create_user(db: Session, user: schemas.UserCreate):
 
     return db_user
 
-
-def get_medico_by_usuario_id(db: Session, id_usuario: int):
-    return db.query(models.Medico).filter(models.Medico.id_usuario == id_usuario).first()
-
-
-def create_sesion_con_medico(db: Session, sesion: schemas.SesionCreate, id_medico: int):
-    db_sesion = models.Sesion(
-        id_medico=id_medico,
-        id_paciente=sesion.id_paciente,
-        fecha=sesion.fecha,
-        motivo=sesion.motivo,
-        diagnostico_previo=sesion.diagnostico_previo,
-        peso=sesion.peso,
-        intervenciones_previas=sesion.intervenciones_previas,
-        paridad=sesion.paridad,
-        etapa_reproductiva=sesion.etapa_reproductiva,
-        tratamientos_anticonceptivos=sesion.tratamientos_anticonceptivos,
-        plan=sesion.plan,
-        anotaciones=sesion.anotaciones,
-    )
-    db.add(db_sesion)
+def create_medico(db: Session, medico: schemas.MedicoCreate):
+    nuevo_medico = models.Medico(**medico.dict())
+    db.add(nuevo_medico)
     db.commit()
-    db.refresh(db_sesion)
-    return db_sesion
+    db.refresh(nuevo_medico)
+    return nuevo_medico
+
+def get_medico_by_user(db: Session, user_id: int):
+    return db.query(models.Medico).filter(models.Medico.user_id == user_id).first()
+
+
 
 def get_pacientes(db: Session):
     return db.query(models.Paciente).all()

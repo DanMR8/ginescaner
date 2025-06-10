@@ -57,3 +57,8 @@ def get_current_medico_id(current_user = Depends(get_current_user), db: Session 
     if not medico:
         raise HTTPException(status_code=404, detail="Perfil de médico no encontrado")
     return medico.id_medico
+
+from app.auth import get_current_user
+from app.models import User
+
+

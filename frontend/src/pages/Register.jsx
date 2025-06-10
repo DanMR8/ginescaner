@@ -1,45 +1,71 @@
-import { useState } from 'react';
-import { register } from '../services/api';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "../api/axios";
+import "./Login.css"; // reutilizamos estilos visuales
 
-function Register({ onRegisterSuccess }) {
-  const [form, setForm] = useState({
-    nombre: '',
-    email: '',
-    password: '',
-    rol: 'medico',
-    estatus: 'activo',
-  });
-  const [error, setError] = useState('');
+function Register() {
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [clave, setClave] = useState("");
+  const [confirmarClave, setConfirmarClave] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmitRegister = async (e) => {
     e.preventDefault();
+    if (clave !== confirmarClave) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
-      await register(form);
-      onRegisterSuccess(); // redirige al login o carga perfil
-    } catch {
-      setError('No se pudo registrar. ¿Email ya registrado?');
+      await axios.post("/register", {
+        nombre,
+        email,
+        clave,
+        tipo: "medico" // por ahora todos los registros serán médicos
+      });
+      navigate("/nuevo-medico"); // irá a pantalla 5
+    } catch (error) {
+      alert("Error al registrar usuario");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Registro</h2>
-      <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} required />
-      <input type="email" name="email" placeholder="Correo" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required />
-      <select name="rol" onChange={handleChange}>
-        <option value="medico">Médico</option>
-        <option value="admin">Admin</option>
-      </select>
-      <button type="submit">Registrarse</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
+    <div className="login-container">
+      <form className="login-box" onSubmit={handleSubmitRegister}>
+        <img className="avatar" src="/vite.svg" alt="Avatar" />
+        <input
+          type="text"
+          placeholder="Nombre completo"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Correo electrónico"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={clave}
+          onChange={(e) => setClave(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Repetir contraseña"
+          value={confirmarClave}
+          onChange={(e) => setConfirmarClave(e.target.value)}
+          required
+        />
+        <button type="submit">Registrarse</button>
+      </form>
+    </div>
   );
 }
 
 export default Register;
-
