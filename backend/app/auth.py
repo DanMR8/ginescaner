@@ -22,7 +22,7 @@ def authenticate_user(db: Session, email: str, password: str):
     user = crud.get_user_by_email(db, email)
     if not user:
         return False
-    if not verify_password(password, user.password):
+    if not verify_password(password, user.clave):
         return False
     return user
 

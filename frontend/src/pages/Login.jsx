@@ -1,8 +1,8 @@
+// Login.jsx ==========================================================================================================
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { Box, Paper,Grid2, TextField, Button, Avatar, } from '@mui/material';
 import axios from "../api/axios";
-// import fondo from './fondo.jpg'
+import logo from "../assets/ginescaner.png";
 import "./Login.css";
 
 function Login() {
@@ -13,21 +13,32 @@ function Login() {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/login", {
-        correo,
-        clave,
+      const response = await axios.post("/login", new URLSearchParams({
+        username: correo,
+        password: clave
+      }), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        transformRequest: [(data) => data]
       });
+
       localStorage.setItem("token", response.data.access_token);
+      localStorage.setItem("usuario", JSON.stringify(response.data.user));
       navigate("/pacientes");
     } catch (error) {
       alert("Correo o contraseña incorrectos");
+      console.error(error);
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" >
+      {/* style={{ backgroundImage: `url(${fondo})` }} */}
       <form className="login-box" onSubmit={handleSubmitLogin}>
-        <img className="avatar" src="/vite.svg" alt="Avatar" />
+        <div className="avatar-container">
+          <img className="avatar" src={logo} alt="GineScaner" />
+        </div>
         <input
           type="email"
           placeholder="Correo electrónico"
@@ -52,3 +63,4 @@ function Login() {
 }
 
 export default Login;
+// Login.jsx ==========================================================================================================

@@ -1,0 +1,91 @@
+Hola necesito que me ayudes a editar este proyecto en en front, back y base de datos, de acuerdo al siguiente flujo:
+Flujo enfocado al usuario con rol médico:
+
+Consideraciones:
+Las pantallas 1 a 5 tienen la misma imagen de fondo
+Los contenendores mencionados en las pantallas 1 a 5 tienen un estilo común con bordes redondeados y color de fondo semitransparente
+
+Pantalla 1 - login
+-Imaqen de fondo que crubra la pantalla por completo
+-Contenedor centrado, con estilo semi transparente 
+--Imagen o avatar circular
+--Campo correo electrónico
+--Campo contraseña
+--Botón iniciar sesión(navega a pantalla 3)
+--Botón crear una cuenta(navega a antalla 2)
+
+Pantalla 2 - signin
+-Imaqen de fondo que crubra la pantalla por completo
+-Contenedor centrado, con estilo semi transparente 
+--Imagen o avatar circular
+--Nombre completo 
+--Campo correo electrónico
+--Campo contraseña
+--Campo repetir contraseña(con verificación de que sea igual a la otra)
+--Botón Registrarse (navega a pantalla 5)
+
+Pantalla 3 - pacientes
+-Contenedor buscar paciente
+--Campo Nombre
+--Campo Apellidos
+--Elemento que muestre resultados
+--Botón nuevo paciente (navega a pantalla 4)
+
+Pantalla 4 - nuevo paciente 
+-Contenedor 
+--Campo nombres
+--Campo Apellidos
+--Campo fecha de nacimiento 
+--Campo alergias
+--Campo enfermedades crónicas 
+--Campo contacto de emergencia 
+--Campo teléfono 
+--Campo correo
+--Boton guardar (navega a pantalla 6)
+
+Pantalla 5 - nuevo médico
+-contenedor 
+--campo nombres
+--campo apellidos
+--campo especialidad
+--campo cédula
+--campo institución
+--campo teléfono
+--campo correo
+--botón guardar (navega a pantalla 3)
+
+Pantalla 6 - nueva consulta
+-contenedor
+--texto que muestra la fecha actúa automática
+--campo motivo
+--campo diagnostico previo
+--campo peso
+--campo cirugías previas
+--campo paridad
+--campo etapa reproductiva (selector: 'prepuber', 'fertil', 'menopausica', 'postmenopausica', 'otro)
+--campo  tratamientos anticonceptivos
+--Boton cargar imagen (navega a pantalla 7)
+
+Pantalla 7 - carga de imágenes
+-contenedor izquierdo
+--Boton cargar nueva imagen (abrirá un explorador de archivos)
+--contenedor imagen original
+--contenedor imagen procesada por cnn útero
+--contenedor imagen procesada por cnn mioma
+-contenedor derecho
+--desplegable Expediente (muestra los textos de los campos llenados en pantalla 6)
+---texto que muestra la fecha actúa automática
+---texto campo motivo
+---texto campo diagnostico previo
+---texto campo peso
+---texto campo cirugías previas
+---texto campo paridad
+---texto campo etapa reproductiva (selector: 'prepuber', 'fertil', 'menopausica', 'postmenopausica', 'otro)
+---texto campo  tratamientos anticonceptivos
+--Campo plan
+--campo anotaciones
+--contenedor de control de inferencias
+---Texto de detecciones de cnn (que encontró y con que confianza)
+---Campo descripcion
+
+ya tengo algunos avances, revisa el proyecto por favor. hasta donde me quede, era necesario revisar el post para la pantalla 2 y faltaba el back correspondiente para NuevoMedico.jsx

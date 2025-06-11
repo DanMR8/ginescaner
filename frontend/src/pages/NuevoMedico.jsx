@@ -1,7 +1,9 @@
+// NuevoMedico.jsx ==========================================================================================================
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import "./Login.css"; // Reutiliza los estilos de fondo y contenedor
+import logo from "../assets/ginescaner.png";
 
 function NuevoMedico() {
   const [userId, setUserId] = useState(null);
@@ -67,3 +69,4 @@ function NuevoMedico() {
 }
 
 export default NuevoMedico;
+// NuevoMedico.jsx ==========================================================================================================

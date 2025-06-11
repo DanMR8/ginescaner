@@ -12,7 +12,9 @@ import Register from "./pages/Register";
 import Pacientes from "./pages/Pacientes";
 import NuevaSesion from "./pages/NuevaSesion";
 import SubirImagenes from "./pages/SubirImagenes";
-import NuevoMedico from "./pages/NuevoMedico"; // 👈 agregaremos esta pantalla
+import NuevoMedico from "./pages/NuevoMedico"; 
+import { Box } from '@mui/material';
+
 
 import { getPerfil } from "./services/api";
 
@@ -43,7 +45,8 @@ function App() {
   };
 
   return (
-    <div>
+    <div style={{ margin: 0, padding: 0, height: "100vh", width: "100vw", overflow: "hidden" }}>
+  
       {user && (
         <nav>
           <button onClick={() => navigate("/pacientes")}>Pacientes</button>

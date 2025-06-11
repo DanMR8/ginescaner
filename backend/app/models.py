@@ -1,3 +1,4 @@
+# // models.py ==========================================================================================================
 from sqlalchemy import Column, Integer, String, Date, Text, Enum, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -6,6 +7,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
+    apellidos = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, index=True)
     clave = Column(String(100), nullable=False)
     tipo = Column(String(20), nullable=False)
@@ -79,3 +81,4 @@ class Ultrasonido(Base):
     descripcion = Column(Text)
 
     sesion = relationship("Sesion", back_populates="ultrasonidos")
+# // models.py ==========================================================================================================

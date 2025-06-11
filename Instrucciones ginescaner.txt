@@ -1,0 +1,24 @@
+Instrucciones ginescaner
+Abrir docker
+
+Iniciar proyecto:
+docker compose up --build
+docker-compose up
+
+Detener proyecto:
+docker compose down
+
+Iniciar frontend:
+cd frontend
+npm run dev
+
+Entorno Python:
+conda create -n ginescaner python=3.10 -y
+conda activate ginescaner
+pip install fastapi uvicorn sqlalchemy pymysql python-multipart
+
+Base de datos:
+CREATE DATABASE ginescaner1;
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin123';
+GRANT ALL PRIVILEGES ON mi_proyecto.* TO 'admin'@'localhost';
+//SQLALCHEMY_DATABASE_URL = "mysql://admin:admin123@localhost:3306/mi_proyecto"

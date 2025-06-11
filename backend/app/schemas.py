@@ -1,3 +1,4 @@
+# // schemas.py ==========================================================================================================
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
@@ -21,16 +22,18 @@ class MedicoOut(MedicoBase):
         from_attributes = True
 
 class UserCreate(BaseModel):
-    usuario: str
-    contrasena: str
+    nombre: str
+    apellidos: str            
+    email: str
+    clave: str
     tipo: str = "medico"
     estatus: str = "activo"
-    perfil_medico: Optional[MedicoCreate] = None
 
 class UserOut(BaseModel):
     id: int
     nombre: str
-    email: str
+    # apellidos: str
+    # email: str
     tipo: str
 
     class Config:
@@ -66,3 +69,5 @@ class SesionOut(SesionCreate):
 
     class Config:
         from_attributes = True
+
+# // schemas.py ==========================================================================================================
