@@ -9,3 +9,5 @@ pydantic[email]
 pymysql
 python-multipart
 cryptography
+pymysql
+bcrypt==4.0.1

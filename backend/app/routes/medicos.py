@@ -1,3 +1,4 @@
+#// medicos.py=========================================================
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import schemas, crud, database
@@ -11,3 +12,4 @@ def crear_medico(medico: schemas.MedicoCreate, db: Session = Depends(get_db)):
     if existente:
         raise HTTPException(status_code=400, detail="Este usuario ya tiene datos médicos registrados.")
     return crud.create_medico(db, medico)
+#// medicos.py=========================================================

@@ -4,13 +4,10 @@ from datetime import datetime
 from typing import Optional
 
 class MedicoBase(BaseModel):
-    nombres: str
-    apellidos: str
     especialidad: str
     cedula: str
     institucion: str
     telefono: str
-    correo: str
 
 class MedicoCreate(MedicoBase):
     user_id: int
@@ -23,7 +20,7 @@ class MedicoOut(MedicoBase):
 
 class UserCreate(BaseModel):
     nombre: str
-    apellidos: str            
+    apellidos: str
     email: str
     clave: str
     tipo: str = "medico"
@@ -32,8 +29,6 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     nombre: str
-    # apellidos: str
-    # email: str
     tipo: str
 
     class Config:

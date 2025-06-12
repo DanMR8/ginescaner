@@ -32,7 +32,7 @@ def create_medico(db: Session, medico: schemas.MedicoCreate):
     return nuevo_medico
 
 def get_medico_by_user(db: Session, user_id: int):
-    return db.query(models.Medico).filter(models.Medico.id_usuario == user_id).first()
+    return db.query(models.Medico).filter(models.Medico.user_id == user_id).first()
 
 def get_pacientes(db: Session):
     return db.query(models.Paciente).all()

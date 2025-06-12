@@ -19,14 +19,15 @@ class Medico(Base):
     __tablename__ = "medicos"
 
     id = Column(Integer, primary_key=True, index=True)
-    id_usuario = Column(Integer, ForeignKey("users.id"))
-    nombres = Column(String(100), nullable=False)
-    apellidos = Column(String(100), nullable=False)
+    # id_usuario = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    # nombres = Column(String(100), nullable=False)
+    # apellidos = Column(String(100), nullable=False)
     especialidad = Column(String(100), nullable=False)
     cedula = Column(String(50), nullable=False)
     institucion = Column(String(100), nullable=False)
     telefono = Column(String(20), nullable=False)
-    correo = Column(String(100), nullable=False)
+    # correo = Column(String(100), nullable=False)
 
     usuario = relationship("User", back_populates="medico")
     sesiones = relationship("Sesion", back_populates="medico")
