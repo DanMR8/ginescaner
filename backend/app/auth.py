@@ -1,3 +1,5 @@
+# auth.py ==============================================
+
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -62,3 +64,4 @@ from app.auth import get_current_user
 from app.models import User
 
 
+# auth.py ==============================================

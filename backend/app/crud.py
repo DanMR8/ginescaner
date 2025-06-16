@@ -2,6 +2,7 @@
 from sqlalchemy.orm import Session
 from app import models, schemas
 from passlib.context import CryptContext
+from fastapi import HTTPException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -15,7 +16,8 @@ def create_user(db: Session, user: schemas.UserCreate):
         apellidos=user.apellidos,    # ✅ nuevo campo
         email=user.email,
         clave=hashed_password,
-        tipo=user.tipo
+        tipo=user.tipo,
+        estatus=user.estatus
     )
     db.add(db_user)
     db.commit()
@@ -41,7 +43,7 @@ def get_paciente(db: Session, paciente_id: int):
     return db.query(models.Paciente).filter(models.Paciente.id == paciente_id).first()
 
 def create_paciente(db: Session, paciente: schemas.PacienteCreate):
-    db_paciente = models.Paciente(**p.paciente.dict())
+    db_paciente = models.Paciente(**paciente.dict())  # ✅ usar directamente `paciente.dict()`
     db.add(db_paciente)
     db.commit()
     db.refresh(db_paciente)
@@ -62,6 +64,41 @@ def update_paciente(db: Session, paciente_id: int, paciente_data: schemas.Pacien
         db.commit()
         db.refresh(paciente)
     return paciente
+
+def create_paciente_con_usuario(db: Session, data: schemas.PacienteRegistro):
+    # 🛑 Validar email duplicado
+    if get_user_by_email(db, data.email):
+        raise HTTPException(status_code=400, detail="El correo ya está registrado")
+
+    # 1. Crear usuario
+    hashed_password = pwd_context.hash(data.clave or "paciente123")
+    nuevo_usuario = models.User(
+        nombre=data.nombre,
+        apellidos=data.apellidos,
+        email=data.email,
+        clave=hashed_password,
+        tipo="paciente",
+        estatus="activo"
+    )
+    db.add(nuevo_usuario)
+    db.commit()
+    db.refresh(nuevo_usuario)
+
+    # 2. Crear paciente
+    nuevo_paciente = models.Paciente(
+        id_usuario=nuevo_usuario.id,
+        fecha_nacimiento=data.fecha_nacimiento,
+        telefono=data.telefono,
+        contacto_emergencia=data.contacto_emergencia,
+        alergias=data.alergias,
+        enfermedades_cronicas=data.enfermedades_cronicas
+    )
+    db.add(nuevo_paciente)
+    db.commit()
+    db.refresh(nuevo_paciente)
+
+    return nuevo_paciente
+
 
 # def create_sesion(db: Session, sesion: schemas.SesionCreate):
 #     db_sesion = models.Sesion(**sesion.dict())

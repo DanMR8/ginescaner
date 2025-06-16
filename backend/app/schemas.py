@@ -1,6 +1,6 @@
 # // schemas.py ==========================================================================================================
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from pydantic import BaseModel, EmailStr,conint
+from datetime import datetime, date
 from typing import Optional
 
 class MedicoBase(BaseModel):
@@ -39,8 +39,14 @@ class PacienteCreate(BaseModel):
     edad: int
     diagnostico: str = ""
 
-class PacienteOut(PacienteCreate):
-    id: int
+class PacienteOut(BaseModel):
+    id_paciente: int
+    id_usuario: int
+    fecha_nacimiento: date
+    telefono: Optional[str]
+    contacto_emergencia: Optional[str]
+    alergias: Optional[str]
+    enfermedades_cronicas: Optional[str]
 
     class Config:
         from_attributes = True
@@ -53,7 +59,7 @@ class SesionCreate(BaseModel):
     peso: Optional[float] = None
     intervenciones_previas: Optional[str] = None
     paridad: Optional[int] = None
-    etapa_reproductiva: Optional[str] = None
+    etapa_reproductiva: Optional[conint(ge=0, le=4)] = None
     tratamientos_anticonceptivos: Optional[str] = None
     plan: Optional[str] = None
     anotaciones: Optional[str] = None
@@ -61,6 +67,23 @@ class SesionCreate(BaseModel):
 class SesionOut(SesionCreate):
     id_sesion: int
     id_medico: int
+
+    class Config:
+        from_attributes = True
+
+class PacienteRegistro(BaseModel):
+    # Datos del usuario
+    nombre: str
+    apellidos: str
+    email: EmailStr
+    clave: Optional[str] = "paciente123"
+
+    # Datos clínicos
+    fecha_nacimiento: date
+    telefono: Optional[str]
+    contacto_emergencia: Optional[str]
+    alergias: Optional[str]
+    enfermedades_cronicas: Optional[str]
 
     class Config:
         from_attributes = True

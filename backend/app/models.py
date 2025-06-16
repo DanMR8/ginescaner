@@ -2,6 +2,8 @@
 from sqlalchemy import Column, Integer, String, Date, Text, Enum, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import relationship
 from app.database import Base
+from datetime import datetime
+from enum import IntEnum
 
 class User(Base):
     __tablename__ = "users"
@@ -11,9 +13,11 @@ class User(Base):
     email = Column(String(100), unique=True, index=True)
     clave = Column(String(100), nullable=False)
     tipo = Column(String(20), nullable=False)
+    estatus = Column(String(20), default="activo")  # 👈 agregar esta línea
 
     pacientes = relationship("Paciente", back_populates="usuario")
     medico = relationship("Medico", uselist=False, back_populates="usuario")
+
 
 class Medico(Base):
     __tablename__ = "medicos"
@@ -37,17 +41,21 @@ class Paciente(Base):
 
     id_paciente = Column(Integer, primary_key=True, index=True)
     id_usuario = Column(Integer, ForeignKey("users.id"), nullable=False)
-    nombres = Column(String(100), nullable=False)
-    apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
     alergias = Column(Text)
     enfermedades_cronicas = Column(Text)
     contacto_emergencia = Column(String(100))
     telefono = Column(String(20), unique=True)
-    correo = Column(String(100), unique=True)
 
     usuario = relationship("User", back_populates="pacientes")
     sesiones = relationship("Sesion", back_populates="paciente")
+
+class EtapaReproductiva(IntEnum):
+    PREPUBER = 0
+    FERTIL = 1
+    MENOPAUSICA = 2
+    POSTMENOPAUSICA = 3
+    OTRO = 4
 
 class Sesion(Base):
     __tablename__ = "sesiones"
@@ -55,13 +63,13 @@ class Sesion(Base):
     id_sesion = Column(Integer, primary_key=True, index=True)
     id_medico = Column(Integer, ForeignKey("medicos.id"), nullable=False)
     id_paciente = Column(Integer, ForeignKey("pacientes.id_paciente"), nullable=False)
-    fecha = Column(DateTime, nullable=False)
+    fecha = Column(DateTime, nullable=False, default=datetime.utcnow)
     motivo = Column(Text, nullable=False)
     diagnostico_previo = Column(Text)
     peso = Column(DECIMAL(5, 2))
     intervenciones_previas = Column(Text)
     paridad = Column(Integer)
-    etapa_reproductiva = Column(Enum('prepuber','fertil','menopausica','postmenopausica','otro'))
+    etapa_reproductiva = Column(Integer)
     tratamientos_anticonceptivos = Column(Text)
     plan = Column(Text)
     anotaciones = Column(Text)
