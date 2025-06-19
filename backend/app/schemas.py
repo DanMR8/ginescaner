@@ -51,6 +51,23 @@ class PacienteOut(BaseModel):
     class Config:
         from_attributes = True
 
+class PacienteConUsuario(BaseModel):
+    id_paciente: int
+    id_usuario: int
+    fecha_nacimiento: date
+    telefono: Optional[str]
+    contacto_emergencia: Optional[str]
+    alergias: Optional[str]
+    enfermedades_cronicas: Optional[str]
+    
+    # Datos del usuario relacionados
+    nombre: str
+    apellidos: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
 class SesionCreate(BaseModel):
     id_paciente: int
     fecha: datetime
@@ -64,12 +81,21 @@ class SesionCreate(BaseModel):
     plan: Optional[str] = None
     anotaciones: Optional[str] = None
 
+# class SesionOut(SesionCreate):
+#     id_sesion: int
+#     id_medico: int
+
+#     class Config:
+#         from_attributes = True
 class SesionOut(SesionCreate):
     id_sesion: int
     id_medico: int
+    etapa_reproductiva: Optional[int] = None  # 👈 fuerza que sea int
 
     class Config:
         from_attributes = True
+        use_enum_values = True  # 👈 fuerza que Enum se convierta en número
+
 
 class PacienteRegistro(BaseModel):
     # Datos del usuario

@@ -211,13 +211,15 @@ function Pacientes() {
               <button
                 style={{ marginRight: "0.5rem" }}
                 onClick={() => {
-                  localStorage.setItem("pacienteSeleccionado", JSON.stringify(p));
-                  navigate("/nueva-sesion");
+                  // localStorage.setItem("pacienteSeleccionado", JSON.stringify({ id_paciente: p.id }));
+                  // navigate("/nueva-sesion", { state: { id_paciente: p.id } });
+                  localStorage.setItem("pacienteSeleccionado", JSON.stringify({ id_paciente: p.id_paciente }));
+                  navigate("/nueva-sesion", { state: { id_paciente: p.id_paciente } });
                 }}
               >
                 Nueva consulta
               </button>
-              <button onClick={() => navigate(`/consultas-previas/${p.id}`)}>
+              <button onClick={() => navigate(`/consultas-previas/${p.id_paciente}`)}>
                 Consultas previas
               </button>
             </div>

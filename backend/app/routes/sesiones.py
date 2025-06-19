@@ -1,3 +1,4 @@
+# sesiones.py============================================
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app import schemas, crud, auth, database
@@ -13,3 +14,4 @@ def crear_sesion(
     id_medico: int = Depends(auth.get_current_medico_id)
 ):
     return crud.create_sesion_con_medico(db, sesion, id_medico)
+# sesiones.py============================================

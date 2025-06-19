@@ -100,11 +100,18 @@ def create_paciente_con_usuario(db: Session, data: schemas.PacienteRegistro):
     return nuevo_paciente
 
 
-# def create_sesion(db: Session, sesion: schemas.SesionCreate):
-#     db_sesion = models.Sesion(**sesion.dict())
-#     db.add(db_sesion)
-#     db.commit()
-#     db.refresh(db_sesion)
-#     return db_sesion
-# // crud.py ==========================================================================================================
+from app.models import EtapaReproductiva  # 👈 Asegúrate de importar el Enum
 
+def create_sesion_con_medico(db: Session, sesion_data: schemas.SesionCreate, id_medico: int):
+    nueva_sesion = models.Sesion(**sesion_data.dict(), id_medico=id_medico)
+    db.add(nueva_sesion)
+    db.commit()
+    db.refresh(nueva_sesion)
+
+    # ✅ Corregimos posible error de validación por serialización del Enum
+    if isinstance(nueva_sesion.etapa_reproductiva, EtapaReproductiva):
+        nueva_sesion.etapa_reproductiva = nueva_sesion.etapa_reproductiva.value
+
+    return nueva_sesion
+
+# // crud.py ==========================================================================================================

@@ -6,6 +6,7 @@ from app.schemas import PacienteRegistro
 from app.models import User
 from app.auth import get_current_user
 from app.database import get_db
+from typing import List
 
 router = APIRouter()
 
@@ -21,13 +22,42 @@ def registrar_paciente_completo(
 ):
     return crud.create_paciente_con_usuario(db, paciente)
 
-@router.get("/pacientes/buscar")
-def buscar_pacientes(nombre: str = "", apellidos: str = "", db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    pacientes = db.query(models.User).join(models.Paciente).filter(
-        models.User.tipo == "paciente",
-        models.User.nombre.ilike(f"%{nombre}%"),
-        models.User.apellidos.ilike(f"%{apellidos}%")
-    ).all()
+# @router.get("/pacientes/buscar")
+# def buscar_pacientes(nombre: str = "", apellidos: str = "", db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+#     pacientes = db.query(models.User).join(models.Paciente).filter(
+#         models.User.tipo == "paciente",
+#         models.User.nombre.ilike(f"%{nombre}%"),
+#         models.User.apellidos.ilike(f"%{apellidos}%")
+#     ).all()
+#     return pacientes
+@router.get("/pacientes/buscar", response_model=List[schemas.PacienteConUsuario])
+def buscar_pacientes(
+    nombre: str = "",
+    apellidos: str = "",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    pacientes = (
+        db.query(
+            models.Paciente.id_paciente.label("id_paciente"),
+            models.Paciente.id_usuario,
+            models.Paciente.fecha_nacimiento,
+            models.Paciente.telefono,
+            models.Paciente.contacto_emergencia,
+            models.Paciente.alergias,
+            models.Paciente.enfermedades_cronicas,
+            models.User.nombre.label("nombre"),
+            models.User.apellidos.label("apellidos"),
+            models.User.email.label("email"),
+        )
+        .join(models.User, models.User.id == models.Paciente.id_usuario)
+        .filter(
+            models.User.tipo == "paciente",
+            models.User.nombre.ilike(f"%{nombre}%"),
+            models.User.apellidos.ilike(f"%{apellidos}%")
+        )
+        .all()
+    )
     return pacientes
 
 @router.get("/pacientes", response_model=list[schemas.PacienteOut])

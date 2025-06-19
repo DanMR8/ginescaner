@@ -55,10 +55,11 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 def get_current_medico_id(current_user = Depends(get_current_user), db: Session = Depends(database.get_db)):
-    medico = crud.get_medico_by_usuario_id(db, current_user.id_usuario)
+    # medico = crud.get_medico_by_usuario_id(db, current_user.id_usuario)
+    medico = crud.get_medico_by_user(db, current_user.id)
     if not medico:
         raise HTTPException(status_code=404, detail="Perfil de médico no encontrado")
-    return medico.id_medico
+    return medico.id
 
 from app.auth import get_current_user
 from app.models import User
