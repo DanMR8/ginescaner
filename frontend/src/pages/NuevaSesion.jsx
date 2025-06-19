@@ -63,6 +63,12 @@ const NuevaSesion = () => {
       return;
     }
 
+    const pesoFloat = parseFloat(formulario.peso);
+    if (pesoFloat && (pesoFloat <= 0 || pesoFloat > 500)) {
+      alert("El peso debe estar entre 1 kg y 500 kg.");
+      return;
+    }
+
     const datos = {
       ...formulario,
       id_paciente: parseInt(formulario.id_paciente),

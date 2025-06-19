@@ -32,32 +32,85 @@ function Pacientes() {
     }
   }, []);
 
+  // const handleSubmitNuevoPaciente = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     await axios.post(
+  //       "/pacientes/registro",
+  //       {
+  //         nombre,
+  //         apellidos,
+  //         email,
+  //         fecha_nacimiento: fechaNacimiento,
+  //         telefono,
+  //         contacto_emergencia: contactoEmergencia,
+  //         alergias,
+  //         enfermedades_cronicas: enfermedadesCronicas,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+      
+  //     alert("Paciente registrado correctamente");
+
+  //     // Reiniciar campos
+  //     setNombre("");
+  //     setApellidos("");
+  //     setEmail("");
+  //     setFechaNacimiento("");
+  //     setTelefono("");
+  //     setContactoEmergencia("");
+  //     setAlergias("");
+  //     setEnfermedadesCronicas("");
+  //     navigate("/nueva-sesion");
+  //   } catch (error) {
+  //     if (error.response?.data?.detail) {
+  //       const detalle = error.response.data.detail;
+      
+  //       if (typeof detalle === "string") {
+  //         alert("Error: " + detalle); // Por ejemplo: "El correo ya existe"
+  //       } else if (Array.isArray(detalle)) {
+  //         // Si viene una lista de errores de validación
+  //         const mensajes = detalle.map((e) => `• ${e.msg} (${e.loc.join(" > ")})`).join("\n");
+  //         alert("Error de validación:\n" + mensajes);
+  //       } else {
+  //         alert("Error desconocido al registrar paciente.");
+  //       }
+      
+  //     } else {
+  //       alert("Error inesperado al registrar paciente.");
+  //     }
+    
+  //     console.error("Respuesta del servidor:", error.response?.data || error);
+  //   }
+  // };
   const handleSubmitNuevoPaciente = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post(
-        "/pacientes/registro",
-        {
-          nombre,
-          apellidos,
-          email,
-          fecha_nacimiento: fechaNacimiento,
-          telefono,
-          contacto_emergencia: contactoEmergencia,
-          alergias,
-          enfermedades_cronicas: enfermedadesCronicas,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await axios.post("/pacientes/registro", {
+        nombre,
+        apellidos,
+        email,
+        fecha_nacimiento: fechaNacimiento,
+        telefono,
+        contacto_emergencia: contactoEmergencia,
+        alergias,
+        enfermedades_cronicas: enfermedadesCronicas,
+      });
+
+      const pacienteCreado = response.data;
+
+      // ✅ Guardar el paciente en localStorage
+      localStorage.setItem("pacienteSeleccionado", JSON.stringify(pacienteCreado));
 
       alert("Paciente registrado correctamente");
 
-      // Reiniciar campos
+      // 🧹 Reiniciar campos
       setNombre("");
       setApellidos("");
       setEmail("");
@@ -66,25 +119,29 @@ function Pacientes() {
       setContactoEmergencia("");
       setAlergias("");
       setEnfermedadesCronicas("");
-      navigate("/nueva-sesion");
+
+      // 🚀 Navegar con el ID correcto del paciente nuevo
+      navigate("/nueva-sesion", {
+        state: { id_paciente: pacienteCreado.id_paciente }
+      });
+
     } catch (error) {
       if (error.response?.data?.detail) {
         const detalle = error.response.data.detail;
-      
+
         if (typeof detalle === "string") {
-          alert("Error: " + detalle); // Por ejemplo: "El correo ya existe"
+          alert("Error: " + detalle);
         } else if (Array.isArray(detalle)) {
-          // Si viene una lista de errores de validación
           const mensajes = detalle.map((e) => `• ${e.msg} (${e.loc.join(" > ")})`).join("\n");
           alert("Error de validación:\n" + mensajes);
         } else {
           alert("Error desconocido al registrar paciente.");
         }
-      
+
       } else {
         alert("Error inesperado al registrar paciente.");
       }
-    
+
       console.error("Respuesta del servidor:", error.response?.data || error);
     }
   };

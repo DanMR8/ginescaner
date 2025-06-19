@@ -1,5 +1,6 @@
 # // models.py ==========================================================================================================
-from sqlalchemy import Column, Integer, String, Date, Text, Enum, ForeignKey, DateTime, DECIMAL
+# from sqlalchemy import Column, Integer, String, Date, Text, Enum, ForeignKey, DateTime, DECIMAL
+from sqlalchemy import Column, Integer, String, Date, Text, Enum as SQLEnum, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import relationship
 from app.database import Base
 from datetime import datetime
@@ -69,7 +70,7 @@ class Sesion(Base):
     peso = Column(DECIMAL(5, 2))
     intervenciones_previas = Column(Text)
     paridad = Column(Integer)
-    etapa_reproductiva = Column(Integer)
+    etapa_reproductiva = Column(SQLEnum(EtapaReproductiva, name="etapa_reproductiva_enum"), nullable=True)
     tratamientos_anticonceptivos = Column(Text)
     plan = Column(Text)
     anotaciones = Column(Text)

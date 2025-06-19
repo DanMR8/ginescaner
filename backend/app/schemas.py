@@ -1,7 +1,8 @@
 # // schemas.py ==========================================================================================================
 from pydantic import BaseModel, EmailStr,conint
 from datetime import datetime, date
-from typing import Optional
+from typing import Optional, Union
+from app.models import EtapaReproductiva 
 
 class MedicoBase(BaseModel):
     especialidad: str
@@ -76,7 +77,8 @@ class SesionCreate(BaseModel):
     peso: Optional[float] = None
     intervenciones_previas: Optional[str] = None
     paridad: Optional[int] = None
-    etapa_reproductiva: Optional[conint(ge=0, le=4)] = None
+    # etapa_reproductiva: Optional[conint(ge=0, le=4)] = None
+    etapa_reproductiva: Optional[EtapaReproductiva] = None
     tratamientos_anticonceptivos: Optional[str] = None
     plan: Optional[str] = None
     anotaciones: Optional[str] = None
@@ -90,8 +92,8 @@ class SesionCreate(BaseModel):
 class SesionOut(SesionCreate):
     id_sesion: int
     id_medico: int
-    etapa_reproductiva: Optional[int] = None  # 👈 fuerza que sea int
-
+    # etapa_reproductiva: Optional[int] = None  # 👈 fuerza que sea int
+    # etapa_reproductiva: Optional[Union[int, str]] = None
     class Config:
         from_attributes = True
         use_enum_values = True  # 👈 fuerza que Enum se convierta en número

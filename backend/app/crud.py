@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from passlib.context import CryptContext
 from fastapi import HTTPException
+from app.models import EtapaReproductiva
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -102,16 +103,50 @@ def create_paciente_con_usuario(db: Session, data: schemas.PacienteRegistro):
 
 from app.models import EtapaReproductiva  # 👈 Asegúrate de importar el Enum
 
+# def create_sesion_con_medico(db: Session, sesion_data: schemas.SesionCreate, id_medico: int):
+#     nueva_sesion = models.Sesion(**sesion_data.dict(), id_medico=id_medico)
+#     db.add(nueva_sesion)
+#     db.commit()
+#     db.refresh(nueva_sesion)
+
+#     # ✅ Corregimos posible error de validación por serialización del Enum
+#     if isinstance(nueva_sesion.etapa_reproductiva, EtapaReproductiva):
+#         nueva_sesion.etapa_reproductiva = nueva_sesion.etapa_reproductiva.value
+
+#     return nueva_sesion
+
 def create_sesion_con_medico(db: Session, sesion_data: schemas.SesionCreate, id_medico: int):
-    nueva_sesion = models.Sesion(**sesion_data.dict(), id_medico=id_medico)
+    datos = sesion_data.dict()
+
+    # 🔐 Forzar que etapa_reproductiva sea número entero
+    # etapa = datos.get("etapa_reproductiva")
+    # if isinstance(etapa, EtapaReproductiva):
+    #     datos["etapa_reproductiva"] = etapa.value
+    # elif isinstance(etapa, str):
+    #     try:
+    #         # Intenta convertirlo si viene como texto ("menopausica")
+    #         datos["etapa_reproductiva"] = EtapaReproductiva[etapa.upper()].value
+    #     except KeyError:
+    #         raise ValueError(f"Valor de etapa_reproductiva inválido: {etapa}")
+
+    etapa = datos.get("etapa_reproductiva")
+    if isinstance(etapa, EtapaReproductiva):
+        datos["etapa_reproductiva"] = etapa  # ahora puedes dejarlo directo
+    elif isinstance(etapa, str):
+        try:
+            datos["etapa_reproductiva"] = EtapaReproductiva[etapa.upper()]
+        except KeyError:
+            raise ValueError(f"Valor de etapa_reproductiva inválido: {etapa}")
+    elif isinstance(etapa, int):
+        datos["etapa_reproductiva"] = EtapaReproductiva(etapa)
+    
+
+    nueva_sesion = models.Sesion(**datos, id_medico=id_medico)
     db.add(nueva_sesion)
     db.commit()
     db.refresh(nueva_sesion)
-
-    # ✅ Corregimos posible error de validación por serialización del Enum
-    if isinstance(nueva_sesion.etapa_reproductiva, EtapaReproductiva):
-        nueva_sesion.etapa_reproductiva = nueva_sesion.etapa_reproductiva.value
-
     return nueva_sesion
+
+
 
 # // crud.py ==========================================================================================================
