@@ -48,14 +48,14 @@ function App() {
   return (
     <div style={{ margin: 0, padding: 0, height: "100vh", width: "100vw", overflow: "hidden" }}>
   
-      {user && (
+      {/* {user && (
         <nav>
           <button onClick={() => navigate("/pacientes")}>Pacientes</button>
           <button onClick={() => navigate("/nueva-sesion")}>Nueva Sesión</button>
-          <button onClick={() => navigate("/subir-imagen")}>Subir Imagen</button>
+          <button onClick={() => navigate("/subir-imagenes")}>Subir Imagen</button>
           <button onClick={handleLogout}>Cerrar sesión</button>
         </nav>
-      )}
+      )} */}
 
       <Routes>
         <Route
@@ -83,7 +83,7 @@ function App() {
           element={user ? <NuevaSesion /> : <Navigate to="/login" />}
         />
         <Route
-          path="/subir-imagen"
+          path="/subir-imagenes"
           element={user ? <SubirImagenes /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<h2>Página no encontrada</h2>} />

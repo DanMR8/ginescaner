@@ -68,12 +68,37 @@ def listar_pacientes(db: Session = db_dependency, current_user = user_dependency
 def crear_paciente(paciente: schemas.PacienteCreate, db: Session = db_dependency, current_user = user_dependency):
     return crud.create_paciente(db, paciente)
 
-@router.get("/pacientes/{paciente_id}", response_model=schemas.PacienteOut)
-def obtener_paciente(paciente_id: int, db: Session = db_dependency, current_user = user_dependency):
-    paciente = crud.get_paciente(db, paciente_id)
-    if not paciente:
+# @router.get("/pacientes/{paciente_id}", response_model=schemas.PacienteOut)
+# def obtener_paciente(paciente_id: int, db: Session = db_dependency, current_user = user_dependency):
+#     paciente = crud.get_paciente(db, paciente_id)
+#     if not paciente:
+#         raise HTTPException(status_code=404, detail="Paciente no encontrado")
+#     return paciente
+
+@router.get("/pacientes/{paciente_id}", response_model=schemas.PacienteExtendido)
+def obtener_paciente_con_usuario(paciente_id: int, db: Session = db_dependency, current_user = user_dependency):
+    resultado = (
+        db.query(
+            models.Paciente.id_paciente,
+            models.Paciente.id_usuario,
+            models.Paciente.fecha_nacimiento,
+            models.Paciente.telefono,
+            models.Paciente.contacto_emergencia,
+            models.Paciente.alergias,
+            models.Paciente.enfermedades_cronicas,
+            models.User.nombre,
+            models.User.apellidos,
+            models.User.email
+        )
+        .join(models.User, models.User.id == models.Paciente.id_usuario)
+        .filter(models.Paciente.id_paciente == paciente_id)
+        .first()
+    )
+
+    if not resultado:
         raise HTTPException(status_code=404, detail="Paciente no encontrado")
-    return paciente
+
+    return resultado
 
 @router.put("/pacientes/{paciente_id}", response_model=schemas.PacienteOut)
 def actualizar_paciente(paciente_id: int, paciente: schemas.PacienteCreate, db: Session = db_dependency, current_user = user_dependency):

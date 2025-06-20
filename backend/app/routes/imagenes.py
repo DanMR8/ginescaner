@@ -1,62 +1,61 @@
-
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
-from fastapi.responses import FileResponse
+# imagenes.py==========================================================
+from fastapi import APIRouter, UploadFile, File, Form, Depends, Body, HTTPException
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.auth import get_current_user
-from app import models
-import os
+from datetime import datetime
 import shutil
+import os
 import uuid
+from app import database, auth, models
 
-router = APIRouter(prefix="/imagenes", tags=["imagenes"])
+router = APIRouter()
+db_dependency = Depends(database.get_db)
+get_medico = Depends(auth.get_current_user)
 
-MEDIA_FOLDER = "media"
-os.makedirs(MEDIA_FOLDER, exist_ok=True)
+ORIGEN_DIR = "app/static/imagenes/originales"
+PROCESADO_DIR = "app/static/imagenes/procesadas"
 
-@router.post("/{id_sesion}")
-def subir_imagen(
-    id_sesion: int,
-    archivo: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user),
+os.makedirs(ORIGEN_DIR, exist_ok=True)
+os.makedirs(PROCESADO_DIR, exist_ok=True)
+
+@router.post("/imagenes/analizar")
+async def analizar_imagen_temporal(
+    file: UploadFile = File(...),
 ):
-    # Validar que la sesión pertenezca al médico
-    sesion = db.query(models.Sesion).filter(models.Sesion.id == id_sesion).first()
-    if not sesion or sesion.id_medico != user["id"]:
-        raise HTTPException(status_code=403, detail="No autorizado")
+    try:
+        # ✅ Verificar que el tipo MIME sea imagen
+        if not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="El archivo no es una imagen válida")
 
-    extension = archivo.filename.split(".")[-1]
-    if extension.lower() not in ["jpg", "jpeg", "png"]:
-        raise HTTPException(status_code=400, detail="Formato de archivo no válido")
+        # ✅ Tomar extensión original (puede ser .bmp, .jpg, .png, etc.)
+        extension = os.path.splitext(file.filename)[-1].lower()
 
-    nombre_archivo = f"{uuid.uuid4()}.{extension}"
-    carpeta_sesion = os.path.join(MEDIA_FOLDER, f"sesion_{id_sesion}")
-    os.makedirs(carpeta_sesion, exist_ok=True)
-    ruta_archivo = os.path.join(carpeta_sesion, nombre_archivo)
+        # 🔒 Validar extensiones potencialmente válidas
+        extensiones_validas = [".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".gif", ".webp"]
+        if extension not in extensiones_validas:
+            raise HTTPException(status_code=400, detail=f"Formato no soportado: {extension}")
 
-    with open(ruta_archivo, "wb") as buffer:
-        shutil.copyfileobj(archivo.file, buffer)
+        # 🆔 Generar nombre único
+        nombre_base = str(uuid.uuid4())
+        nombre_archivo = f"{nombre_base}{extension}"
+        ruta_origen = os.path.join(ORIGEN_DIR, nombre_archivo)
 
-    # Aquí iría el procesamiento con YOLO
-    ruta_resultado = ruta_archivo.replace(f".{extension}", f"_resultado.jpg")
-    shutil.copy(ruta_archivo, ruta_resultado)  # simular procesamiento
+        # 💾 Guardar imagen original
+        with open(ruta_origen, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    nueva = models.Imagen(
-        id_sesion=id_sesion,
-        ruta=ruta_archivo,
-        ruta_resultado=ruta_resultado
-    )
-    db.add(nueva)
-    db.commit()
-    db.refresh(nueva)
+        # 🔁 Simular análisis (luego se aplicará YOLO)
+        nombre_procesada = f"{nombre_base}_proc{extension}"
+        ruta_procesada = os.path.join(PROCESADO_DIR, nombre_procesada)
+        shutil.copy(ruta_origen, ruta_procesada)
 
-    return {"id": nueva.id, "ruta": nueva.ruta, "resultado": nueva.ruta_resultado}
+        return {
+            "original": f"/{ruta_origen}",
+            "procesada": f"/{ruta_procesada}",
+            "nombre_original": nombre_archivo,
+            "nombre_procesada": nombre_procesada
+        }
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno al analizar imagen: {str(e)}")
 
-@router.get("/ver/{imagen_id}")
-def ver_imagen(imagen_id: int, db: Session = Depends(get_db)):
-    imagen = db.query(models.Imagen).filter(models.Imagen.id == imagen_id).first()
-    if not imagen:
-        raise HTTPException(status_code=404, detail="Imagen no encontrada")
-    return FileResponse(imagen.ruta_resultado)
+# imagenes.py==========================================================

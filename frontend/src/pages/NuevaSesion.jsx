@@ -84,7 +84,15 @@ const NuevaSesion = () => {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
-      .then(() => setMensaje('Sesión creada correctamente'))
+      // .then(() => setMensaje('Sesión creada correctamente'))
+      // .catch((error) => {
+      //   console.error(error.response?.data || error);
+      //   setMensaje('Error al crear sesión');
+      // });
+      .then(() => {
+        setMensaje('Sesión creada correctamente');
+        setTimeout(() => navigate('/subir-imagenes'), 500); // Redirigir después de una pequeña pausa
+      })
       .catch((error) => {
         console.error(error.response?.data || error);
         setMensaje('Error al crear sesión');

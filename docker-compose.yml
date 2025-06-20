@@ -9,10 +9,10 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin123
     ports:
-      - '3307:3306'  # Puerto expuesto en host
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
-    healthcheck:  # ✅ Espera a que MySQL esté listo
+    healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
@@ -24,9 +24,7 @@ services:
     restart: always
     depends_on:
       mysql:
-        condition: service_healthy  # ✅ Espera salud de MySQL
-    volumes:
-      - ./backend:/code
+        condition: service_healthy
     ports:
       - '8000:8000'
     environment:
@@ -35,6 +33,11 @@ services:
       DB_NAME: mi_proyecto
       DB_USER: admin
       DB_PASSWORD: admin123
+    volumes:
+      - ./backend:/code
+      # 🟩 Agregados para imágenes:
+      - ./backend/app/static/imagenes/originales:/code/app/static/imagenes/originales
+      - ./backend/app/static/imagenes/procesadas:/code/app/static/imagenes/procesadas
 
   frontend:
     build: ./frontend
@@ -42,10 +45,10 @@ services:
     restart: always
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
     ports:
       - '5173:5173'
+    volumes:
+      - ./frontend:/app
     stdin_open: true
     tty: true
     command: sh -c "npm install && npm run dev -- --host"

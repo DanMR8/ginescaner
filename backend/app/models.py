@@ -85,6 +85,7 @@ class Ultrasonido(Base):
     id_imagen = Column(Integer, primary_key=True, index=True)
     id_sesion = Column(Integer, ForeignKey("sesiones.id_sesion"), nullable=False)
     imagen = Column(String(255))  # O usar LargeBinary si guardas el binario
+    procesada = Column(String(255))
     path = Column(String(255), nullable=False)
     fecha = Column(DateTime, nullable=False)
     lesiones = Column(Text)

@@ -116,4 +116,19 @@ class PacienteRegistro(BaseModel):
     class Config:
         from_attributes = True
 
+class PacienteExtendido(BaseModel):
+    id_paciente: int
+    id_usuario: int
+    fecha_nacimiento: date
+    telefono: Optional[str]
+    contacto_emergencia: Optional[str]
+    alergias: Optional[str]
+    enfermedades_cronicas: Optional[str]
+    nombre: str
+    apellidos: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
 # // schemas.py ==========================================================================================================

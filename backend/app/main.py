@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import users, protected, medicos, pacientes, sesiones, imagenes
 from app.database import engine, Base
+from fastapi.staticfiles import StaticFiles
 
 # Crear tablas en la base de datos si no existen
 Base.metadata.create_all(bind=engine)
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Registrar rutas
 app.include_router(users.router)
